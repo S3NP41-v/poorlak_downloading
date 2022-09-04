@@ -6,19 +6,6 @@ import requests
 
 
 if __name__ == '__main__':
-    h = \
-        """
-        download entire series from wbijam.pl
-            -h, --help          shows this message
-    
-            Required:
-            -m, --main-link     specify the main link,          example: https://danmachi.wbijam.pl
-            -s, --season        specify the season,             example: pierwsza_seria.html 
-    
-            Optional:
-            -q, --quality       specify the quality to download, ("vl": 360p, "lq": 480p, "sd": 720p, "hd": 1080p)
-            -o, --output        specify the path to download to
-        """
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
     parser.add_argument("-m", type=str, required=True, help="specify the main link, example: https://danmachi.wbijam.pl")
     parser.add_argument("-s", type=str, required=True, help="specify the season, example: pierwsza_seria.html")
