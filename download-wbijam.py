@@ -2,16 +2,32 @@ from cda import CDA
 from wbijam import wbijam
 import argparse
 import requests
-# import multiprocessing.dummy
+import multiprocessing.dummy
 
+
+def _download(data: tuple) -> None:  # I/O
+    clink = data[0]
+    k = data[1]
+
+    c = CDA(clink)
+    raw_link = c.getRaw(ql=args.q)
+
+    print(f"#{k} downloading data from {clink} [{raw_link}] ...")  # debug
+    r = requests.get(raw_link)
+
+    print(f"#{k} creating file: " + args.o + '/' + f"{k}-{c.playerID}.mp4")  # debug
+    with open(args.o + '/' + f"{k}-{c.playerID}.mp4", "wb") as f:
+        f.write(r.content)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
     parser.add_argument("-m", type=str, required=True, help="specify the main link, example: https://danmachi.wbijam.pl")
     parser.add_argument("-s", type=str, required=True, help="specify the season, example: pierwsza_seria.html")
 
-    parser.add_argument("-q", required=False, choices=["hd", "sd", "lq", "vl"], help="specify the quality to download", default="hd")
+    parser.add_argument("-q", required=False, choices=["hd", "sd", "lq", "vl"], help="specify the quality to download [default 'hd']", default="hd")
     parser.add_argument("-o", type=str, required=False, help="specify the path to download to")
+
+    parser.add_argument("-t", type=int, required=False, help="amount of threads to use while downloading [default 5]", default=5)
 
     args = parser.parse_args()
 
@@ -26,13 +42,8 @@ if __name__ == '__main__':
         args.o = "./"
 
     w = wbijam(main_link=args.m, series=args.s)
-    for k, clink in enumerate(w.get_cLinks()):
-        c = CDA(clink)
-        raw_link = c.getRaw(ql=args.q)
-        r = requests.get(raw_link)
 
-        print("creating file: " + args.o + '/' + f"{k}-{c.playerID}.mp4")  # debug
-        with open(args.o + '/' + f"{k}-{c.playerID}.mp4", "wb") as f:
-            f.write(r.content)
-
+    with multiprocessing.dummy.Pool(args.t) as pool:
+        clinks = w.get_cLinks()
+        pool.map(_download, zip(clinks, list(range(len(clinks)))))
 
