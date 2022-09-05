@@ -45,5 +45,5 @@ if __name__ == '__main__':
 
     with multiprocessing.dummy.Pool(args.t) as pool:
         clinks = w.get_cLinks()
-        pool.map(_download, zip(clinks, list(range(len(clinks)))))
+        pool.map(_download, zip(clinks, list(range(len(clinks)))), chumksize=1)
 
