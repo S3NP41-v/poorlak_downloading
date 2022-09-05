@@ -2,7 +2,7 @@ from cda import CDA
 from wbijam import wbijam
 import argparse
 import requests
-import multiprocessing.dummy
+import multiprocessing
 
 
 def _download(data: tuple) -> None:  # I/O
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument("-q", required=False, choices=["hd", "sd", "lq", "vl"], help="specify the quality to download [default 'hd']", default="hd")
     parser.add_argument("-o", type=str, required=False, help="specify the path to download to")
 
-    parser.add_argument("-t", type=int, required=False, help="amount of threads to use while downloading [default 5]", default=5)
+    parser.add_argument("-t", type=int, required=False, help="amount of threads to use while downloading [default 4]", default=4)
 
     args = parser.parse_args()
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     w = wbijam(main_link=args.m, series=args.s)
 
-    with multiprocessing.dummy.Pool(args.t) as pool:
+    with multiprocessing.Pool(args.t) as pool:
         clinks = w.get_cLinks()
-        pool.map(_download, zip(clinks, list(range(len(clinks)))), chumksize=1)
+        pool.map(_download, zip(clinks, list(range(len(clinks)))), chunksize=1)
 
