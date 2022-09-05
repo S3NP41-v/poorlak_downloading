@@ -8,6 +8,7 @@ import multiprocessing
 def _download(data: tuple) -> None:  # I/O
     clink = data[0]
     k = data[1]
+    args = data[2]
 
     c = CDA(clink)
     raw_link = c.getRaw(ql=args.q)
@@ -46,5 +47,6 @@ if __name__ == '__main__':
 
     with multiprocessing.Pool(args.t) as pool:
         clinks = w.get_cLinks()
-        pool.map(_download, zip(clinks, list(range(len(clinks)))), chunksize=1)
+        # TODO: this is just awful, re-do this
+        pool.map(_download, zip(clinks, list(range(len(clinks))), [args] * len(clinks)), chunksize=1)
 
