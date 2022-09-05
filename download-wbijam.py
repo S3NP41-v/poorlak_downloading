@@ -19,6 +19,7 @@ def _download(data: tuple) -> None:  # I/O
     with open(args.o + '/' + f"{k}-{c.playerID}.mp4", "wb") as f:
         f.write(r.content)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
     parser.add_argument("-m", type=str, required=True, help="specify the main link, example: https://danmachi.wbijam.pl")
