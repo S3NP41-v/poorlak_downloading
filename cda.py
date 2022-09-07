@@ -3,6 +3,7 @@
 import requests
 import re
 from json import loads
+from time import sleep
 
 
 class CDA:
@@ -30,4 +31,10 @@ class CDA:
                   {}],
               "id": 3}
 
-        return loads(requests.post(url=self.url, json=js).text)["result"]["resp"]
+        res = loads(requests.post(url=self.url, json=js).text)["result"]["resp"]
+        if res == "bad key":
+            sleep(3)
+            return self.getRaw(ql)
+        else:
+            return res
+
