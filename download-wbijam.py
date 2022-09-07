@@ -105,6 +105,7 @@ if __name__ == '__main__':
 
         vals = list(zip(range(len(clinks)), clinks, [args.q] * len(clinks), [args.o] * len(clinks), [args.l] * len(clinks)))
 
+        main_start = time()
         if not args.b:
             raw_links = pool.starmap(download, vals)
         else:
@@ -114,4 +115,4 @@ if __name__ == '__main__':
     with open(args.o + "/" + "alt-list.txt", "w") as f:
         f.write('\n'.join(raw_links))
 
-    print(f"\x1b[{len(clinks) + 2};0HDone!")
+    print(f"\x1b[{len(clinks) + 2};0HDone!, All Total Time: {round((time() - main_start) / 60, 2)}m")
