@@ -1,5 +1,5 @@
 # poorlak_downloading
-for downloadig entire series from wbijam.pl
+for downloading entire series from wbijam.pl
 
 try:
 `python dir/download-wbijam.py -h`
