@@ -48,6 +48,7 @@ def download(k: int, clink: str, quality: str, path: str, list_only: bool) -> st
                 # using the list_only to skip downloading a file again
                 list_only = True
 
+    start = time()
     if not list_only:
         raw_data = requests.get(raw, stream=True)
 
@@ -55,7 +56,6 @@ def download(k: int, clink: str, quality: str, path: str, list_only: bool) -> st
         _filesize = round(filesize / 10**6, 2)
         done = 0
         with open(f"{path}/{filename}", "wb") as file:
-            start = time()
             for chunk in raw_data.iter_content(chunk_size=4096):
                 done += len(chunk)
                 ctime = time() - start
