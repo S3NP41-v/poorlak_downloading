@@ -6,7 +6,6 @@ import multiprocessing
 from os import system
 from sys import platform
 from time import time, sleep
-from msvcrt import kbhit, getch
 
 
 def dummy_download(k: int, clink: str, quality: str, path: str, list_only: bool) -> str:  # I/O + returning raw link
@@ -63,13 +62,13 @@ def download(k: int, clink: str, quality: str, path: str, list_only: bool) -> st
                 _done = round(done / 10**6, 1)
                 speed = round(_done / max(ctime, 1), 2)
 
-                print(f"\x1b[{str(k + 2)};0H\x1b[2KDownloading: [...]{clink.split('/')[-1]} -> {path}{filename} {' ' * ((len(str(_filesize))+1) - len(str(_done)))} {_done}MB/{_filesize}MB ~{speed}MB/s", end='', flush=True)
+                print(f"\x1b[{str(k + 2)};0H\x1b[2KDownloading: [...]{clink.split('/')[-1]} -> {path}/{filename} {' ' * ((len(str(_filesize))+1) - len(str(_done)))} {_done}MB/{_filesize}MB ~{speed}MB/s", end='', flush=True)
                 # stdout.flush()
 
                 file.write(chunk)
     # else: return only raw link
 
-    print(f"\x1b[{str(k+2)};0H\x1b[2KCompleted: {clink} -> {path}{filename} total time: {round((time() - start) / 60, 2)}m", end='', flush=True)
+    print(f"\x1b[{str(k+2)};0H\x1b[2KCompleted: {clink} -> {path}/{filename} total time: {round((time() - start) / 60, 2)}m", end='', flush=True)
     # stdout.flush()
 
     return raw
@@ -77,8 +76,7 @@ def download(k: int, clink: str, quality: str, path: str, list_only: bool) -> st
 
 def main():
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
-    parser.add_argument("-m", type=str, required=True,
-                        help="specify the main link, example: https://danmachi.wbijam.pl")
+    parser.add_argument("-m", type=str, required=True, help="specify the main link, example: https://danmachi.wbijam.pl")
     parser.add_argument("-s", type=str, required=True, help="specify the season, example: pierwsza_seria.html")
 
     parser.add_argument("-q", required=False, choices=["hd", "sd", "lq", "vl"],
