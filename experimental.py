@@ -1,12 +1,9 @@
+from requests import get
+
 from cda import CDA
 from wbijam import wbijam
 import argparse
-import requests
-import re
-import multiprocessing
-from os import system
-from sys import platform
-from time import time, sleep
+
 
 
 # contact the developer on discord: S3NP41#8357
@@ -21,30 +18,7 @@ from time import time, sleep
 #
 # have fun! And if you ever decide using my code, please do share what you created
 
-
-class errors(Exception):
-    ...
-
-
-class incorrectLink(errors):
-    def __init__(self, link: str):
-        self.link = link
-        super().__init__(f"link '{link}' is incorrect")
-
-    def __str__(self):
-        return f"'{self.link}' -/-> 'https://[a-z0-9]*\.wbijam\.pl'"
-
-
-class serverNotOk(errors):
-    def __init__(self, response: int):
-        self.response = response
-        super().__init__(f"server returned {response}")
-
-    def __str__(self):
-        return f"unexpected server response [{self.response}]"
-
-
-def main():
+def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
     # TODO: redo whole argument system, keep in mind the goal of not having to open the browser
 
@@ -69,14 +43,34 @@ def main():
     parser.add_argument("-k", type=int, required=False, help="specify amount of cores to use, check: min(n_of_cores, given_number)", default=1)
 
     #  // required, with the exception when major behaviour changers are used
-    # Series, either a name, or an ID, throws an error if is MBC is not used and series unspecified
     parser.add_argument("series", type=str, nargs="?", default="unspecified")
 
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:  # IO
+    args = parser().parse_args()
+    wbj = wbijam()
 
     #  // additional checks
+    if not wbj.ok:
+        ...  # exit with error [server]
+
     if ~(args.list_series | args.devour) & args.series == "unspecified":
-        raise Exception("...")  # TODO
+        ...  # exit with error [arg conflict]
+
+    #  // MBC
+    if args.list_series:
+        ...  # list series, exit
+
+    if args.devour:
+        ...  # devour, exit
+
+
+
+
+
+
 
 
 
