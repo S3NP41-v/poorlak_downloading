@@ -16,7 +16,7 @@ from os import popen
 # i make no promises of it being fail proof as it relays a lot on the internal workings
 # of cda.pl and wbijam.pl to not change, in the case you are very free to ask me to fix it
 #
-# have fun and if you decide to use it I am interested in what you came up with, so do share!
+# have fun! And if you ever decide using my code, please do share what you created
 
 class CDA:
     def __init__(self, url: str):
@@ -26,7 +26,6 @@ class CDA:
         rawData = _r.text
 
         self.cookies = _r.cookies
-
 
         self.qualities: dict = loads(re.search("\"qualities\":(\{.*?\})", rawData).groups()[0])
         self.videoHash = re.search("hash2\":\"([a-z0-9]*)\"", rawData).groups()[0]

@@ -1,9 +1,7 @@
-from requests import get
-
+import asyncio
 from cda import CDA
 from wbijam import wbijam
 import argparse
-
 
 
 # contact the developer on discord: S3NP41#8357
