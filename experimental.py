@@ -24,9 +24,9 @@ def parser() -> argparse.ArgumentParser:
 
     #  // major behaviour changers
     # switch to show all available series on wbijam.pl
-    parser.add_argument("--list-series", action="store_false", type=bool, required=False, help="list available series on wbijam.pl", default=False)
+    parser.add_argument("--list-series", action="store_true", help="list available series on wbijam.pl")
     #  an option for those especially hungry for data
-    parser.add_argument("--devour", action="store_false", type=bool, required=False, help="'when i said everything, i meant EVERYTHING' (download every series, every opening, every ending possible)", default=False)
+    parser.add_argument("--devour", action="store_true", help="'when i said everything, i meant EVERYTHING' (download every series, every opening, every ending possible)")
 
     #  // optional
     # an option for specifying 'episodes'
@@ -34,11 +34,11 @@ def parser() -> argparse.ArgumentParser:
     # an option for specifying quality, 1 of 4 possible
     parser.add_argument("-q", type=str, required=False, help="specify quality, one of four possible: 'vl'(very low), 'lq'(low), 'sd'(standard (720p)), 'hd'(high (1040p)) (not always all are available for an episode)", default="highest")
     # an option for listing possible episodes of a series
-    parser.add_argument("-l", action="store_false", type=bool, required=False, help="list available episodes of a series", default=False)
+    parser.add_argument("-l", action="store_false", required=False, help="list available episodes of a series", default=False)
     # an option to change the save path
     parser.add_argument("-p", type=str, required=False, help="specify output path, default used is current execution path", default="./")
     # an option to create content lists
-    parser.add_argument("-c", action="store_false", type=bool, required=False, help="create a content list", default=False)
+    parser.add_argument("-c", action="store_true", help="create a content list")
     # an option for specifying the amount of cores to use
     parser.add_argument("-k", type=int, required=False, help="specify amount of cores to use, check: min(n_of_cores, given_number)", default=1)
 
@@ -50,13 +50,14 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> None:  # IO
     args = parser().parse_args()
+    print(args)  # debug
     wbj = wbijam()
 
     #  // additional checks
     if not wbj.ok:
         ...  # exit with error [server]
 
-    if ~(args.list_series | args.devour) & args.series == "unspecified":
+    if not (args.list_series or args.devour) and args.series == "unspecified":
         ...  # exit with error [arg conflict]
 
     #  // MBC
@@ -65,14 +66,6 @@ def main() -> None:  # IO
 
     if args.devour:
         ...  # devour, exit
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

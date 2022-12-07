@@ -50,7 +50,6 @@ class wbijam:
         links.remove(('https://inne.wbijam.pl/', 'inne', 'Inne i porzucone'))  # getting rid of sub_link recursion
 
 
-
     def get_sub_series(self) -> [series]:
         ...
 
@@ -58,5 +57,4 @@ class wbijam:
 
 
 w = wbijam()
-w.get_top_series()
 
