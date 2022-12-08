@@ -52,6 +52,8 @@ class series:
 
     #  todo: think of the appropriate place for movies, be wary of arg layout in experimental.py
     #   / proposition: put movies as a season with only episodes
+    #   / the above proposition was accepted as the solution on 08/12/2022 23:59, moving forward 'season' will be the type-
+    #   / -holding: openings, endings, movies, and standard episodes in 'episodes' property with returning type [video]
 
     def __str__(self):
         return self.full

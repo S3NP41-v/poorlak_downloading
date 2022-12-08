@@ -18,6 +18,7 @@ from os import popen
 #
 # have fun! And if you ever decide using my code, please do share what you created
 
+
 class CDA:
     def __init__(self, url: str):
         # making sure to request via https

@@ -27,10 +27,12 @@ def parser() -> argparse.ArgumentParser:
     #  // major behaviour changers [MBC]
     # switch to show all available series on wbijam.pl
     parser.add_argument("--list-series", action="store_true", help="list available series on wbijam.pl")
+    # an option for listing seasons of a series
+    parser.add_argument("--list-seasons", type=str, required=False, help="list available seasons of a series, syntax [short] or [full-name] (- for any space)", default="unspecified")
+    # an option for listing possible episodes of a season
+    parser.add_argument("--list-episodes", type=str, required=False, help="list available episodes of a season, syntax [short] or [full-name] (- for any space)", default="unspecified")
     #  an option for those especially hungry for data
     parser.add_argument("--devour", action="store_true", help="'when i said everything, i meant EVERYTHING' (download every series, every opening, every ending possible)")
-    # an option for listing possible episodes of a series
-    parser.add_argument("--list-episodes", type=str, required=False, help="list available episodes of a series, syntax [short] or [full_name] (_ for any space)", default="unspecified")
 
     #  // optional
     # an option for specifying 'episodes'
@@ -78,15 +80,16 @@ async def main() -> None:  # IO
 
     #  // MBC
     if args.list_series:  # todo: also include sub series
-        ...  # todo:  list series, exit
+        ...  # todo: list series, exit
+
+    if args.list_seasons:
+        ...  # todo: list seasons of a series, exit
 
     if args.list_episodes != "unspecified":
-        ...  # todo: list episodes of a series, exit
+        ...  # todo: list episodes of a season, exit
 
     if args.devour:
         ...  # todo: devour, exit
-
-
 
 
 if __name__ == '__main__':
