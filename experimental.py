@@ -24,7 +24,7 @@ def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="download entire series from wbijam.pl")
     # TODO: redo whole argument system, keep in mind the goal of not having to open the browser
 
-    #  // major behaviour changers
+    #  // major behaviour changers [MBC]
     # switch to show all available series on wbijam.pl
     parser.add_argument("--list-series", action="store_true", help="list available series on wbijam.pl")
     #  an option for those especially hungry for data
@@ -79,7 +79,6 @@ async def main() -> None:  # IO
     #  // MBC
     if args.list_series:  # todo: also include sub series
         ...  # todo:  list series, exit
-
 
     if args.list_episodes != "unspecified":
         ...  # todo: list episodes of a series, exit

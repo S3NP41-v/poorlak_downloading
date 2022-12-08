@@ -37,7 +37,7 @@ class CDA:
             _pairs.append(f"{k}={v};")
         _ck = ' '.join(_pairs)
 
-
+        # default headers for CDA to not get mad
         self.headers = {'authority': 'www.cda.pl',
                         'accept': 'application/json, text/javascript, */*; q=0.01',
                         'accept-language': 'en,pl-PL;q=0.9,pl;q=0.8,en-US;q=0.7',
@@ -55,7 +55,8 @@ class CDA:
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)Chrome/105.0.0.0 Safari/537.36',
                         'x-requested-with': 'XMLHttpRequest'}
 
-    def getRaw(self, ql: str = "hd", retries=1):
+    # Direct link
+    def getRaw(self, ql: str = "hd", retries=1) -> str:
         sortKey = lambda x: {"hd": 0, "sd": 1, "lq": 2, "vl": 3}[x]
         if ql not in self.qualities:
             ql = sorted(list(self.qualities.values()), key=sortKey)[0]
@@ -68,7 +69,6 @@ class CDA:
                   f"{self.videoHash}",
                   {}],
               "id": 3}
-
 
         res = requests.post(url=self.url, json=js, cookies=self.cookies.get_dict()).text
         res = loads(res)
