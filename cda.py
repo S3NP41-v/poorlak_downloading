@@ -28,7 +28,7 @@ class CDA:
 
         self.cookies = _r.cookies
 
-        self.qualities: dict = loads(re.search("\"qualities\":(\{.*?\})", rawData).groups()[0])
+        self.qualities: dict = loads(re.findall("\"qualities\":(\{.*?\})", rawData)[0])
         self.videoHash = re.search("hash2\":\"([a-z0-9]*)\"", rawData).groups()[0]
         self.videoKey = re.search("setTimeout\(function\(\) \{\n.*\n.*ts:\"(\d*)\"", rawData).groups()[0]
         self.playerID = url.split('/')[-1]

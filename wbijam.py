@@ -7,9 +7,6 @@ import aiohttp
 from typing import List, Dict
 
 
-# TODO: async this
-
-
 async def async_get(url: str):
     async with aiohttp.ClientSession() as session:
         async with await session.get(url) as request:
@@ -20,26 +17,60 @@ async def async_get(url: str):
 
 
 class video:
-    def __init__(self, primal_link):
-        pass
+    def __init__(self, link: str, ref: str, name: str):
+        self.link = link
+        self.ref = ref
+        self.name = name
+        self.rule1 = compile("<td class=\"center\">cda</td>\n *.*\n *.*rel=\"(.*?)\">")
+        self.rule2 = compile("iframe src=\"(.*?)\"")
 
-    @property
-    async def direct_link(self) -> str:
-        ...
+    def __str__(self):
+        return self.name
+
+    async def direct_link(self, quality="hd", retries=1) -> str:
+        data = await async_get(self.link + self.ref)
+        plink = findall(self.rule1, data)
+        if not plink:
+            return ""
+
+        plink = plink[0]
+        data = await async_get(self.link + "odtwarzacz-" + plink + ".html")
+        plink = findall(self.rule2, data)
+        if not plink:
+            return ""
+
+        plink = plink[0]
+        plink = "https://www.cda.pl/video/" + plink.split('/')[-1]
+
+        print(plink)
+        return CDA(plink).getRaw(quality, retries)
 
 
 # I know the name is kinda confusing but "season" is also for listing: Movies, Openings, Endings
 class season:
     def __init__(self, **kwargs):
-        self.name = kwargs['name']
         self.link = kwargs['link']
+        self.ref  = kwargs['ref']
+        self.full = kwargs['full']
+
+        self.rule = compile("<tr class=\"lista_hover\">\n *<td><a href=\"(.*?)\"><.*?>(.*)</a></td>")
 
     def __str__(self):
-        return self.name
+        return self.full
 
     @property
     async def episodes(self) -> List[video]:
-        ...
+        data = await async_get(self.link + self.ref)
+        episodes = findall(self.rule, data)
+        episodes.reverse()
+
+        res = list()
+        for ref, name in episodes:
+            kwargs = {"link": self.link, "ref": ref, "name": name}
+            vid = video(**kwargs)
+            res.append(vid)
+
+        return res
 
 
 class series:
@@ -49,11 +80,6 @@ class series:
         self.full = kwargs["full"]
 
         self.rule = compile("<a href=\"(.*?)\">(.*?)</a>")
-
-    #  todo: think of the appropriate place for movies, be wary of arg layout in experimental.py
-    #   / proposition: put movies as a season with only episodes
-    #   / the above proposition was accepted as the solution on 08/12/2022 23:59, moving forward 'season' will be the type-
-    #   / -holding: openings, endings, movies, and standard episodes in 'episodes' property with returning type [video]
 
     def __str__(self):
         return self.full
@@ -66,10 +92,10 @@ class series:
 
         links = findall(self.rule, sector)
         res = dict()
-        for ref, name in links:
-            kwargs = {'link': self.link + ref, 'name': name}
+        for ref, full in links:
+            kwargs = {'link': self.link, 'ref': ref, 'full': full}
             s = season(**kwargs)
-            res[name.lower().replace(' ', '-')] = s
+            res[full.lower().replace(' ', '-')] = s
 
         return res
 
@@ -118,17 +144,3 @@ async def wbijam() -> _wbijam:
     wbj = _wbijam()
     await wbj.__async_init__()
     return wbj
-
-
-# debug
-async def main():
-    w = await wbijam()
-    series = await w.get_top_series()
-    s = series["gs"]
-    x = await s.seasons
-    x = x["pierwsza-seria"]
-    print(x.link)
-
-if __name__ == '__main__':
-    asyncio.run(main())
-# /debug
