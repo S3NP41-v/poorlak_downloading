@@ -42,7 +42,6 @@ class video:
         plink = plink[0]
         plink = "https://www.cda.pl/video/" + plink.split('/')[-1]
 
-        print(plink)
         return CDA(plink).getRaw(quality, retries)
 
 
@@ -137,6 +136,7 @@ class _wbijam:
         return res
 
     async def get_sub_series(self) -> List[series]:
+        # TODO: get sub series, similar to top_series
         ...
 
 

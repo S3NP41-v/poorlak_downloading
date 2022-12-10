@@ -28,23 +28,34 @@ def parser() -> argparse.ArgumentParser:
     # switch to show all available series on wbijam.pl
     parser.add_argument("--list-series", action="store_true", help="list available series on wbijam.pl")
     # an option for listing seasons of a series
-    parser.add_argument("--list-seasons", type=str, required=False, help="list available seasons of a series, syntax [short] or [full-name] (- for any space)", default="unspecified")
+    parser.add_argument("--list-seasons", type=str, required=False,
+                        help="list available seasons of a series, syntax [short] or [full-name] (- for any space)",
+                        default="unspecified")
     # an option for listing possible episodes of a season
-    parser.add_argument("--list-episodes", type=str, required=False, help="list available episodes of a season, syntax [short] or [full-name] (- for any space)", default="unspecified")
+    parser.add_argument("--list-episodes", type=str, required=False,
+                        help="list available episodes of a season, syntax [short] or [full-name] (- for any space)",
+                        default="unspecified")
     #  an option for those especially hungry for data
-    parser.add_argument("--devour", action="store_true", help="'when i said everything, i meant EVERYTHING' (download every series, every opening, every ending possible)")
+    parser.add_argument("--devour", action="store_true",
+                        help="'when i said everything, i meant EVERYTHING' (download every series, every opening, every ending possible)")
 
     #  // optional
     # an option for specifying 'episodes'
-    parser.add_argument("-e", type=str, required=False, help="specify 'episodes' to download, syntax: '1,2,3,4,10,11,12' or '1-4,10-12' will only download episodes 1, 2, 3, 4, 10, 11 and 12", default="all")
+    parser.add_argument("-e", type=str, required=False,
+                        help="specify 'episodes' to download, syntax: '1,2,3,4,10,11,12' or '1-4,10-12' will only download episodes 1, 2, 3, 4, 10, 11 and 12",
+                        default="all")
     # an option for specifying quality, 1 of 4 possible
-    parser.add_argument("-q", type=str, required=False, help="specify quality, one of four possible: 'vl'(very low), 'lq'(low), 'sd'(standard (720p)), 'hd'(high (1040p)) (not always all are available for an episode)", default="highest")
+    parser.add_argument("-q", type=str, required=False,
+                        help="specify quality, one of four possible: 'vl'(very low), 'lq'(low), 'sd'(standard (720p)), 'hd'(high (1040p)) (not always all are available for an episode)",
+                        default="highest")
     # an option to change the save path
-    parser.add_argument("-p", type=str, required=False, help="specify output path, default used is current execution path", default="./")
+    parser.add_argument("-p", type=str, required=False,
+                        help="specify output path, default used is current execution path", default="./")
     # an option to create content lists
     parser.add_argument("-c", action="store_true", help="create a content list")
     # an option for specifying the amount of cores to use
-    parser.add_argument("-k", type=int, required=False, help="specify amount of cores to use, check: min(n_of_cores, given_number)", default=1)
+    parser.add_argument("-k", type=int, required=False,
+                        help="specify amount of cores to use, check: min(n_of_cores, given_number)", default=1)
 
     #  // required, with the exception when major behaviour changers are used
     parser.add_argument("series", type=str, nargs="?", default="unspecified")
@@ -81,6 +92,7 @@ async def main() -> None:  # IO
     #  // MBC
     if args.list_series:  # todo: also include sub series
         ...  # todo: list series, exit
+             #  / addition: print only a screenfull of information at a time
 
     if args.list_seasons:
         ...  # todo: list seasons of a series, exit
