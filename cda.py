@@ -23,7 +23,7 @@ class CDA:
     def __init__(self, url: str):
         # making sure to request via https
         self.url = url.replace('http:', 'https:')
-        _r = requests.get(url)
+        _r = requests.get(url, timeout=5)
         rawData = _r.text
 
         self.cookies = _r.cookies
@@ -71,7 +71,7 @@ class CDA:
                   {}],
               "id": 3}
 
-        res = requests.post(url=self.url, json=js, cookies=self.cookies.get_dict()).text
+        res = requests.post(url=self.url, json=js, cookies=self.cookies.get_dict(), timeout=5).text
         res = loads(res)
         res = res["result"]["resp"]
 

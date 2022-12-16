@@ -6,14 +6,28 @@ import aiohttp
 
 from typing import List, Dict
 
+# TODO: redo a bit of netcode, add some consideration to timeout (by default it will wait forever)
 
-async def async_get(url: str):
+
+async def async_get(url: str, binary=False):
     async with aiohttp.ClientSession() as session:
-        async with await session.get(url) as request:
+        async with await session.get(url, timeout=5) as request:
             data = await request.read()
             en = request.get_encoding()
 
-    return data.decode(en)
+    if not binary:
+        return data.decode(en)
+    else:
+        return data
+
+
+async def async_get_stream(url: str):
+    data = bytes()
+    async with aiohttp.ClientSession() as session:
+        async with await session.get(url, timeout=5) as request:
+            size = request.content_length
+            async for chunk, _ in request.content.iter_chunks():
+                yield chunk, size
 
 
 class video:
@@ -85,6 +99,8 @@ class series:
 
     @property
     async def seasons(self) -> Dict[str, season]:
+        # TODO: remove "kolejność oglądania" from seasons which appears only on series with more than one season
+
         data = await async_get(self.link)
         # splitting the regex search into a tighter sector so the rule does not have to be crazy
         sector = data.split("pmenu_naglowek_b", 1)[1].split("pmenu_naglowek_a")[0]
@@ -101,19 +117,19 @@ class series:
 
 class _wbijam:
     def __init__(self):
-        self.top_link = "https://wbijam.pl"
-        self.sub_link = "https://inne.wbijam.pl"
+        self._top_link = "https://wbijam.pl"
+        self._sub_link = "https://inne.wbijam.pl"
 
         # regex rules for finding links
-        self.top_rule = compile("<a href=\"(.*?)\" class=\"sub_link\" rel=\"(.*?)\">(.*?)</a>[^,]")
-        self.sub_rule = compile("")
+        self._top_rule = compile("<a href=\"(.*?)\" class=\"sub_link\" rel=\"(.*?)\">(.*?)</a>[^,]")
+        self._sub_rule = compile("")
 
     async def __async_init__(self):
-        if get(self.top_link).ok:
+        if get(self._top_link, timeout=5).ok:
             self.ok = True
             self.top_text, self.sub_text = await asyncio.gather(
-                async_get(self.top_link),
-                async_get(self.sub_link))
+                async_get(self._top_link),
+                async_get(self._sub_link))
         else:
             self.ok = False
             self.top_text = None
@@ -122,7 +138,7 @@ class _wbijam:
     async def get_top_series(self) -> Dict[str, series]:
         # splitting the regex search into a tighter sector so the rule does not have to be crazy
         sector = self.top_text.split("Lista anime", 1)[1].split("wsparcie-wsparcie.html", 1)[0]
-        links = findall(self.top_rule, sector)  # link, short, full
+        links = findall(self._top_rule, sector)  # link, short, full
         links.remove(('https://inne.wbijam.pl/', 'inne', 'Inne i porzucone'))  # getting rid of sub_link
 
         res = dict()
