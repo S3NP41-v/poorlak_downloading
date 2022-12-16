@@ -9,9 +9,13 @@ from typing import List, Dict
 # TODO: redo a bit of netcode, add some consideration to timeout (by default it will wait forever)
 
 
+# TODO: async_get is so far the most likely reason for random freezes, specifically when getting 'https://.*\.wbijam\.pl/odtwarzacz-.*\.html' (so far observed only there)
 async def async_get(url: str, binary=False):
+    # debug
+    print(f"async_get({url}, {binary})")
     async with aiohttp.ClientSession() as session:
-        async with await session.get(url, timeout=5) as request:
+        session = await session.get(url, timeout=5)
+        async with session as request:
             data = await request.read()
             en = request.get_encoding()
 
@@ -45,13 +49,13 @@ class video:
         data = await async_get(self.link + self.ref)
         plink = findall(self.rule1, data)
         if not plink:
-            return ""
+            raise Exception("direct link not found")
 
         plink = plink[0]
         data = await async_get(self.link + "odtwarzacz-" + plink + ".html")
         plink = findall(self.rule2, data)
         if not plink:
-            return ""
+            raise Exception("direct link not found")
 
         plink = plink[0]
         plink = "https://www.cda.pl/video/" + plink.split('/')[-1]

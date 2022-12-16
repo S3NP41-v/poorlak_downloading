@@ -18,7 +18,6 @@ async def async_download(vid: video, filename: str) -> None:  # I/O
 
     async with async_open(filename, 'wb') as af:
         done = 0
-
         for chunk in req.iter_content(chunk_size=4096):
             print(f"\r{filename} {done}/{filesize} ({round(done / filesize * 100, 2)}%)", end='')
 
@@ -45,7 +44,12 @@ async def main() -> None:
 
         retry_time = 5
         while True:
+            # debug
+            print("beginning of loop")
+
             try:
+                # debug
+                print(f"async_download({ep, file})")
                 await async_download(ep, file)
             except requests.exceptions.ConnectionError:
                 print(f"\ndownload failed, retrying in {retry_time}s")
