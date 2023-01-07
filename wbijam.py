@@ -7,14 +7,14 @@ import aiohttp
 from typing import List, Dict
 
 # TODO: redo a bit of netcode, add some consideration to timeout (by default it will wait forever)
-
-
 # TODO: async_get is so far the most likely reason for random freezes, specifically when getting 'https://.*\.wbijam\.pl/odtwarzacz-.*\.html' (so far observed only there)
+
+
 async def async_get(url: str, binary=False):
     # debug
-    print(f"async_get({url}, {binary})")
+    # print(f"async_get({url}, {binary})")
     async with aiohttp.ClientSession() as session:
-        session = await session.get(url, timeout=5)
+        session = await session.get(url)
         async with session as request:
             data = await request.read()
             en = request.get_encoding()
@@ -103,13 +103,12 @@ class series:
 
     @property
     async def seasons(self) -> Dict[str, season]:
-        # TODO: remove "kolejność oglądania" from seasons which appears only on series with more than one season
-
         data = await async_get(self.link)
         # splitting the regex search into a tighter sector so the rule does not have to be crazy
         sector = data.split("pmenu_naglowek_b", 1)[1].split("pmenu_naglowek_a")[0]
 
         links = findall(self.rule, sector)
+        links.remove(('kolejnosc_ogladania.html', 'Kolejność oglądania'))  # getting rid of non-season
         res = dict()
         for ref, full in links:
             kwargs = {'link': self.link, 'ref': ref, 'full': full}
@@ -139,25 +138,26 @@ class _wbijam:
             self.top_text = None
             self.sub_text = None
 
-    async def get_top_series(self) -> Dict[str, series]:
+    async def get_top_series(self) -> Dict[str, Dict[str, series]]:
         # splitting the regex search into a tighter sector so the rule does not have to be crazy
         sector = self.top_text.split("Lista anime", 1)[1].split("wsparcie-wsparcie.html", 1)[0]
         links = findall(self._top_rule, sector)  # link, short, full
         links.remove(('https://inne.wbijam.pl/', 'inne', 'Inne i porzucone'))  # getting rid of sub_link
 
-        res = dict()
+        res_full = dict()
+        res_short = dict()
         for link, short, full in links:
             kwargs = {"link": link, "short": short, "full": full}
             s = series(**kwargs)
             # a bit dirty yes, but now we can link from full and short directly to its series
-            res[full] = s
-            res[short] = s
+            res_full[full] = s
+            res_short[short] = s
 
-        return res
+        return {'short': res_short, "full": res_full}
 
-    async def get_sub_series(self) -> List[series]:
+    async def get_sub_series(self) -> Dict[str, Dict[str, series]]:
         # TODO: get sub series, similar to top_series
-        ...
+        return {'short': {'None': None}, "full": {'None': None}}
 
 
 async def wbijam() -> _wbijam:
