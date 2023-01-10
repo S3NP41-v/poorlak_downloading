@@ -3,11 +3,8 @@ from cda import CDA
 from re import compile, findall
 import asyncio
 import aiohttp
-
+from datetime import datetime
 from typing import List, Dict
-
-# TODO: redo a bit of netcode, add some consideration to timeout (by default it will wait forever)
-# TODO: async_get is so far the most likely reason for random freezes, specifically when getting 'https://.*\.wbijam\.pl/odtwarzacz-.*\.html' (so far observed only there)
 
 
 async def async_get(url: str, binary=False):
@@ -35,15 +32,26 @@ async def async_get_stream(url: str):
 
 
 class video:
-    def __init__(self, link: str, ref: str, name: str):
+    def __init__(self, link: str, ref: str, name: str, date: str):
         self.link = link
         self.ref = ref
         self.name = name
+        self.date = date
         self.rule1 = compile("<td class=\"center\">cda</td>\n *.*\n *.*rel=\"(.*?)\">")
         self.rule2 = compile("iframe src=\"(.*?)\"")
 
     def __str__(self):
         return self.name
+
+    @property
+    def ready(self) -> bool:
+        # TODO: for now this will work, but for the future lets make a better way of checking than waiting a day after the date
+        date = int(''.join(self.date.split('.')[::-1]))
+        _ = datetime.now()
+        now  = int(f"{str(_.year)}{str(_.month).zfill(2)}{str(_.day).zfill(2)}")
+        if now > date:
+            return True
+        return False
 
     async def direct_link(self, quality="hd", retries=1) -> str:
         data = await async_get(self.link + self.ref)
@@ -70,7 +78,7 @@ class season:
         self.ref  = kwargs['ref']
         self.full = kwargs['full']
 
-        self.rule = compile("<tr class=\"lista_hover\">\n *<td><a href=\"(.*?)\"><.*?>(.*)</a></td>")
+        self.rule = compile("<tr class=\"lista_hover\">\n *<td><a href=\"(.*?)\"><.*?>(.*)</a></td>\n *.*\n *<td class=\"center\">(.*?)</td>")
 
     def __str__(self):
         return self.full
@@ -82,8 +90,8 @@ class season:
         episodes.reverse()
 
         res = list()
-        for ref, name in episodes:
-            kwargs = {"link": self.link, "ref": ref, "name": name}
+        for ref, name, date in episodes:
+            kwargs = {"link": self.link, "ref": ref, "name": name, "date": date}
             vid = video(**kwargs)
             res.append(vid)
 
