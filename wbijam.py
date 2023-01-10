@@ -7,6 +7,18 @@ from datetime import datetime
 from typing import List, Dict
 
 
+# contact the developer on discord: S3NP41#8357
+# or via an email at: s3np41v@gmail.com
+# ===========================================================================================================
+# = all the code I share is completely free to use, include, change and share further without my permission =
+# = long live the open source!                                                                              =
+# ===========================================================================================================
+#
+# i make no promises, this code may break at any moment, use at your own risk, it relays a lot on the internal workings
+# of cda.pl and wbijam.pl to not change, in the case you are very free to ask me to fix it
+#
+# have fun! And if you ever decide using my code for a project, do show me what you created, better yet, make it open source!
+
 async def async_get(url: str, binary=False):
     # debug
     # print(f"async_get({url}, {binary})")

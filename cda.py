@@ -7,16 +7,16 @@ from time import sleep
 from os import popen
 
 # contact the developer on discord: S3NP41#8357
-#
+# or via an email at: s3np41v@gmail.com
 # ===========================================================================================================
 # = all the code I share is completely free to use, include, change and share further without my permission =
 # = long live the open source!                                                                              =
 # ===========================================================================================================
 #
-# i make no promises of it being fail proof as it relays a lot on the internal workings
+# i make no promises, this code may break at any moment, use at your own risk, it relays a lot on the internal workings
 # of cda.pl and wbijam.pl to not change, in the case you are very free to ask me to fix it
 #
-# have fun! And if you ever decide using my code, please do share what you created
+# have fun! And if you ever decide using my code for a project, do show me what you created, better yet, make it open source!
 
 
 class CDA:
